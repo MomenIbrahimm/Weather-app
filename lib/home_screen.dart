@@ -22,9 +22,6 @@ class HomeScreen extends StatelessWidget {
         return Scaffold(
           body: BuildCondition(
             condition: WeatherCubit.get(context).weatherModel != null &&
-                WeatherCubit.get(context).alexandria != null &&
-                WeatherCubit.get(context).mansurah != null &&
-                WeatherCubit.get(context).aswan != null &&
                 WeatherCubit.get(context).forecastModel != null,
             builder: (context) => SingleChildScrollView(
               child: Column(
@@ -164,64 +161,22 @@ class HomeScreen extends StatelessWidget {
                     ]),
                   ),
                   const SizedBox(
-                    height: 10.0,
+                    height: 25.0,
                   ),
                   const Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-                    child: Text('OTHER CITY'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: SizedBox(
-                      height: 160.0,
-                      child: Row(
-                        children: [
-                          buildOtherCityItem(
-                            name:
-                                '${WeatherCubit.get(context).alexandria!.name}',
-                            temp:
-                                '${(WeatherCubit.get(context).alexandria!.mainData!.temp - 273.15).round()} °C',
-                            description:
-                                '${WeatherCubit.get(context).alexandria!.dataList[0].description}',
-                            image:
-                                'http://openweathermap.org/img/w/${WeatherCubit.get(context).weatherModel!.dataList[0].icon}.png',
-                          ),
-                          buildOtherCityItem(
-                            name: '${WeatherCubit.get(context).aswan!.name}',
-                            temp:
-                                '${(WeatherCubit.get(context).aswan!.mainData!.temp - 273.15).round()} °C',
-                            description:
-                                '${WeatherCubit.get(context).aswan!.dataList[0].description}',
-                            image:
-                                'http://openweathermap.org/img/w/${WeatherCubit.get(context).weatherModel!.dataList[0].icon}.png',
-                          ),
-                          buildOtherCityItem(
-                            name: '${WeatherCubit.get(context).mansurah!.name}',
-                            temp:
-                                '${(WeatherCubit.get(context).mansurah!.mainData!.temp - 273.15).round()} °C',
-                            description:
-                                '${WeatherCubit.get(context).mansurah!.dataList[0].description}',
-                            image:
-                                'http://openweathermap.org/img/w/${WeatherCubit.get(context).weatherModel!.dataList[0].icon}.png',
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 12.0),
+                        EdgeInsets.symmetric(horizontal: 10.0),
                     child: Text('FORECAST NEXT 5 DAYS'),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: SizedBox(
-                      height: 200,
+                      height: 500,
                       child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
                           itemBuilder: (context, index) {
                             return buildForecastCityItem(
+                              name: '${(WeatherCubit.get(context).weatherModel!.name)}',
                               temp:
                                   '${(WeatherCubit.get(context).weatherModel!.mainData!.temp - 273.15).round()} °C',
                               description:
@@ -231,7 +186,7 @@ class HomeScreen extends StatelessWidget {
                             );
                           },
                           separatorBuilder: (context, index) =>
-                              const VerticalDivider(),
+                              const SizedBox(),
                           itemCount: 5,
                       ),
                     ),

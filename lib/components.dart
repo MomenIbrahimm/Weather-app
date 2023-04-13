@@ -40,34 +40,35 @@ buildOtherCityItem({name, temp,description,image}){
   );
 }
 
-buildForecastCityItem({temp,description,image,date}){
-  return SizedBox(
-    width: 110.0,
-    height: 120.0,
-    child: Card(
-      elevation: 2.5,
-      shadowColor: Colors.blue[400],
+buildForecastCityItem({temp,description,image,date,name}){
+  return Card(
+    elevation: 2.5,
+    shadowColor: Colors.blue[400],
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          const SizedBox(height: 2.5,),
-          defaultText(text: temp, color: Colors.black),
-          const SizedBox(
-            height: 5.0,
+          Row(
+            children: [
+              CircleAvatar(backgroundColor: Colors.blueAccent[100],child: Image(image: NetworkImage(image))),
+              const SizedBox(width: 5.0,),
+              defaultText(text: name, color: Colors.black),
+              const SizedBox(width: 5.0,),
+              defaultText(text: temp, color: Colors.black),
+              const SizedBox(
+                height: 5.0,
+              ),
+              const SizedBox(
+                width: 5.0,
+              ),
+              defaultText(
+                  text: description, color: Colors.black54,size: 14.0),
+            ],
           ),
-          Image(image: NetworkImage(image)),
-          const SizedBox(
-            height: 5.0,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          Center(
             child: defaultText(
-                text: description, color: Colors.black54,size: 14.0),
+                text: date, color: Colors.black,size: 14.0),
           ),
-          const SizedBox(
-            height: 20.0,
-          ),
-          defaultText(
-              text: date, color: Colors.black,size: 10.0),
         ],
       ),
     ),
