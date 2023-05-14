@@ -1,9 +1,12 @@
 import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/cubit/state.dart';
 import 'package:weather_app/dio_helper.dart';
-import 'package:weather_app/forecast_model.dart';
-import 'package:weather_app/weather_model.dart';
+import 'package:weather_app/model/forecast_model.dart';
+import 'package:weather_app/model/weather_model.dart';
+import 'package:weather_app/test.dart';
 
 class WeatherCubit extends Cubit<WeatherState> {
   WeatherCubit() : super(InitialWeatherState());
@@ -14,22 +17,56 @@ class WeatherCubit extends Cubit<WeatherState> {
 
   WeatherModel? weatherModel;
 
-  void getWeatherData({String? country}) {
+  getWeatherData({String? country, context}) async {
     emit(WeatherLoadingState());
 
-    DioHelper.getData(
-      url: 'data/2.5/weather',
-      query: {
-        'q': country ?? 'cairo',
-        'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'
-      },
-    ).then((value) {
-      weatherModel = WeatherModel.fromJson(value.data);
+    try {
+      Response response = await DioHelper.getData(
+        url: 'data/2.5/weather',
+        query: {
+          'q': country ?? 'cairo',
+          'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'
+        },
+      );
+      weatherModel = WeatherModel.fromJson(response.data);
       emit(WeatherSuccessState());
-    }).catchError((error) {
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.unknown) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                content: Text('${e.message}'),
+                backgroundColor: Colors.red[400]));
+      } else if (e.type == DioErrorType.connectionTimeout) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  content: Text('${e.message}'),
+                  backgroundColor: Colors.red[400],
+                ));
+      } else if (e.response!.statusCode == 404) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  content: const Text(
+                    'The city name not found',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red[400],
+                ));
+      }else if(e.type == DioErrorType.connectionError){
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              content: const Text(
+                'connection error',
+                style: TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.red[400],
+            ));
+      }
       emit(WeatherErrorState());
-      print(error.toString());
-    });
+    }
   }
 
   List<String> list = [
@@ -40,74 +77,86 @@ class WeatherCubit extends Cubit<WeatherState> {
 
   WeatherModel? alexandria;
 
-  void getAlexandriaWeatherData() {
+  void getAlexandriaWeatherData(context) async{
     emit(GetAlexLoadingState());
 
-    DioHelper.getData(
-      url: 'data/2.5/weather',
-      query: {'q': 'alexandria', 'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'},
-    ).then((value) {
-      alexandria = WeatherModel.fromJson(value.data);
-      emit(GetAlexSuccessState());
-    }).catchError((error) {
+    try{
+     Response response = await DioHelper.getData(
+        url: 'data/2.5/weather',
+        query: {'q': 'alexandria', 'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'},
+      );
+     alexandria = WeatherModel.fromJson(response.data);
+     emit(GetAlexSuccessState());
+    }on DioError catch(e){
+      if (e.type == DioErrorType.unknown) {
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                content: Text('${e.message}'),
+                backgroundColor: Colors.red[400]));
+      }
       emit(GetAlexErrorState());
-      print(error.toString());
-    });
+    }
   }
 
   WeatherModel? aswan;
 
-  void getAswanWeatherData({String? country}) {
+  void getAswanWeatherData(context) async{
     emit(GetAswanLoadingState());
 
-    DioHelper.getData(
-      url: 'data/2.5/weather',
-      query: {'q': 'aswan', 'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'},
-    ).then((value) {
-      aswan = WeatherModel.fromJson(value.data);
+    try{
+      Response response = await DioHelper.getData(
+        url: 'data/2.5/weather',
+        query: {'q': 'aswan', 'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'},
+      );
+      aswan = WeatherModel.fromJson(response.data);
       emit(GetAswanSuccessState());
-    }).catchError((error) {
+    }on DioError catch(e){
       emit(GetAswanErrorState());
-      print(error.toString());
-    });
+    }
   }
 
   WeatherModel? mansurah;
 
-  void getMansurahWeatherData({String? country}) {
+  void getMansurahWeatherData(context) async{
     emit(GetMansurahLoadingState());
 
-    DioHelper.getData(
-      url: 'data/2.5/weather',
-      query: {'q': 'al mansurah', 'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'},
-    ).then((value) {
-      mansurah = WeatherModel.fromJson(value.data);
+    try{
+      Response response = await DioHelper.getData(
+        url: 'data/2.5/weather',
+        query: {'q': 'al mansurah', 'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'},
+      );
+      aswan = WeatherModel.fromJson(response.data);
       emit(GetMansurahSuccessState());
-    }).catchError((error) {
-      emit(GetAswanErrorState());
-      print(error.toString());
-    });
+    }on DioError catch(e){
+      emit(GetMansurahErrorState());
+    }
   }
 
   ForecastModel? forecastModel;
 
-  void getForecastData({String? country}) {
+  void getForecastData({String? country, context}) async {
     emit(GetForecastLoadingState());
 
-    DioHelper.getData(
-      url: 'data/2.5/forecast',
-      query: {
-        'q': country ?? 'cairo',
-        'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'
-      },
-    ).then((value) {
-      forecastModel = ForecastModel.fromJson(value.data);
-      print(forecastModel!.list!.length);
-      print(forecastModel!.city!.id);
+    try {
+      Response response = await DioHelper.getData(
+        url: 'data/2.5/forecast',
+        query: {
+          'q': country ?? 'cairo',
+          'appid': 'e6324cd99bd6387f7b0c69bc4ac65a61'
+        },
+      );
+      forecastModel = ForecastModel.fromJson(response.data);
       emit(GetForecastSuccessState());
-    }).catchError((error) {
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.unknown) {
+        showDialog(
+            context: context,
+            builder: (context) => const AlertDialog(
+                  content: Text('Check your internet connection'),
+                ));
+      }
       emit(GetForecastErrorState());
-      print(error.toString());
-    });
+    }
   }
 }

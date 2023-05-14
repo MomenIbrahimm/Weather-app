@@ -1,12 +1,22 @@
+import 'package:weather_app/model/error_model.dart';
+
 abstract class WeatherState{}
 
 class InitialWeatherState extends WeatherState{}
 
 class WeatherLoadingState extends WeatherState{}
 
-class WeatherSuccessState extends WeatherState{}
+class WeatherSuccessState extends WeatherState{
+  final ErrorModel? error;
 
-class WeatherErrorState extends WeatherState{}
+  WeatherSuccessState({this.error});
+}
+
+class WeatherErrorState extends WeatherState{
+  // final  error;
+  //
+  // WeatherErrorState(this.error);
+}
 
 class GetAlexLoadingState extends WeatherState{}
 
@@ -30,4 +40,8 @@ class GetForecastLoadingState extends WeatherState{}
 
 class GetForecastSuccessState extends WeatherState{}
 
-class GetForecastErrorState extends WeatherState{}
+class GetForecastErrorState extends WeatherState{
+  // final error;
+  //
+  // GetForecastErrorState(this.error);
+}
